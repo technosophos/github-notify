@@ -1,4 +1,4 @@
-VERSION ?= "latest"
+VERSION ?= latest
 
 .PHONY: build
 build:

@@ -24,7 +24,7 @@ const (
 	EnvTargetURL = "GH_TARGET_URL"
 	// EnvToken is the OAuth2 static token
 	EnvToken = "GH_TOKEN"
-	// EnvRepo captures the GitHub repository, e.g. github.com/foo/bar
+	// EnvRepo captures the GitHub repository as org/project, e.g. foo/bar
 	EnvRepo = "GH_REPO"
 	// EnvCommit is the commit to apply this to. A commit can be just about any refish.
 	EnvCommit = "GH_COMMIT"
@@ -86,8 +86,8 @@ func isValidState(s string) bool {
 
 func sendNotification(token, commit, repo string, status *github.RepoStatus) error {
 	parts := strings.Split(repo, "/")
-	if len(parts) != 3 {
-		return fmt.Errorf("expected repository for form domain/org/repo, got %q", repo)
+	if len(parts) != 2 {
+		return fmt.Errorf("expected repository for form org/repo, got %q", repo)
 	}
 
 	t := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -97,8 +97,8 @@ func sendNotification(token, commit, repo string, status *github.RepoStatus) err
 
 	_, _, err := client.Repositories.CreateStatus(
 		c,
+		parts[0],
 		parts[1],
-		parts[2],
 		commit,
 		status,
 	)
